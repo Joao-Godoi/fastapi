@@ -13,3 +13,8 @@ def list_blog(limit: int = 10, published: bool = False, sort: Optional[str] = No
     else:
         return {"result": [{"Blog 3": {"Content": "Content of blog 3", "Published": False}},
                            {"Blog 4": {"Content": "Content of blog 4", "Published": False}}]}
+
+
+@app.get('/blog/{id}')
+def detail_blog(id: int):
+    return {f"Blog {id}": {"Content": f"Details of blog {id}"}}
