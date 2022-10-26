@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from sqlalchemy.orm import Session
 from typing import Optional
 
-from src.blog.database import engine
-from src.blog.models import Base
+from src.blog.database import engine, get_db
+from src.blog.models import Base, BlogModel
 from src.blog.schemas import BlogRequest
 
 
@@ -26,8 +27,11 @@ def detail_blog(id: int):
 
 
 @app.post('/blog')
-def create_blog(blog: BlogRequest):
-    return {"message": "Blog is created successfully!",
-            "title": blog.title,
-            "content": blog.content,
-            "published": blog.published}
+def create_blog(request: BlogRequest, db: Session = Depends(get_db)):
+    new_blog = BlogModel(title=request.title, content=request.content)
+    db.add(new_blog)
+    db.commit()
+    db.refresh(new_blog)
+
+    return {"message": "Blog is created successfully!", "title": new_blog.title,
+            "content": new_blog.content}
