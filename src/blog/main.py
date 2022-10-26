@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 from typing import Optional
 
-from src.blog.schemas import Blog
+from src.blog.database import engine
+from src.blog.models import Base
+from src.blog.schemas import BlogRequest
 
 
 app = FastAPI()
+Base.metadata.create_all(engine)
 
 
 @app.get('/blog')
@@ -23,7 +26,7 @@ def detail_blog(id: int):
 
 
 @app.post('/blog')
-def create_blog(blog: Blog):
+def create_blog(blog: BlogRequest):
     return {"message": "Blog is created successfully!",
             "title": blog.title,
             "content": blog.content,
