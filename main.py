@@ -1,11 +1,15 @@
-import re
 from fastapi import FastAPI
+from typing import Optional
 
 
 app = FastAPI()
 
 
 @app.get('/blog')
-def list_blog():
-    return {"result": {"Blog 1": "Content of blog 1", "Blog 2": "Content of blog 2",
-                       "Blog 3": "Content of blog 3"}}
+def list_blog(limit: int = 10, published: bool = False, sort: Optional[str] = None):
+    if published:
+        return {"result": [{"Blog 1": {"Content": "Content of blog 1", "Published": "06.21.2022"}},
+                           {"Blog 2": {"Content": "Content of blog 2", "Published": "06.21.2022"}}]}
+    else:
+        return {"result": [{"Blog 3": {"Content": "Content of blog 3", "Published": False}},
+                           {"Blog 4": {"Content": "Content of blog 4", "Published": False}}]}
