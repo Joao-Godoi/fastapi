@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from typing import Optional
 
-from models import Blog
+from src.blog.schemas import Blog
 
 
 app = FastAPI()
