@@ -18,3 +18,4 @@ class UserModel(Base):
     first_name = Column(String)
     last_name = Column(String)
     email = Column(String)
+    password = Column(String)

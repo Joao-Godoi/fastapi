@@ -24,6 +24,10 @@ class UserResponse(BaseModel):
         orm_mode = True
 
 
-class UserDetailsResponse(UserRequest):
+class UserDetailsResponse(BaseModel):
+    first_name: str
+    last_name: str
+    email: str
+
     class Config:
         orm_mode = True

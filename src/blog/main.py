@@ -61,7 +61,8 @@ def list_user(db: Session = Depends(get_db)):
 
 @app.post('/user', status_code=status.HTTP_201_CREATED, response_model=UserDetailsResponse)
 def create_user(request: UserRequest, db: Session = Depends(get_db)):
-    new_user = UserModel(first_name=request.first_name, last_name=request.last_name, email=request.email)
+    new_user = UserModel(first_name=request.first_name, last_name=request.last_name, email=request.email,
+                         password=request.password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -89,6 +90,7 @@ def update_uer(id: int, request: UserRequest, db: Session = Depends(get_db)):
     user = db.query(UserModel).filter(UserModel.id == id)
     if not user.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found to update")
-    user.update({"first_name": request.first_name, "last_name": request.last_name, "email": request.email})
+    user.update({"first_name": request.first_name, "last_name": request.last_name, "email": request.email,
+                 "password": request.password})
     db.commit()
     return user.first()
