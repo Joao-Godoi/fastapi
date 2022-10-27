@@ -1,9 +1,5 @@
 from pydantic import BaseModel
-
-
-class BlogRequest(BaseModel):
-    title: str
-    content: str
+from src.blog.schemas.requests import BlogRequest
 
 
 class BlogResponse(BaseModel):
