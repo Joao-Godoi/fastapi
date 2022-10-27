@@ -75,3 +75,10 @@ def retrieve_user(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail="User not found, check the ID and try again!")
     return user
+
+
+@app.delete('/user/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def destroy_user(id: int, db: Session = Depends(get_db)):
+    db.query(UserModel).filter(UserModel.id == id).delete(synchronize_session=False)
+    db.commit()
+    return True
