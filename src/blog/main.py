@@ -2,11 +2,11 @@ from fastapi import Depends, FastAPI, status, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from src.utils.database import engine, get_db
 from src.blog.models import Base, BlogModel, UserModel
 from src.blog.schemas.requests import BlogRequest, UserRequest
 from src.blog.schemas.responses import (BlogResponse, BlogDetailsResponse, UserResponse, UserDetailsResponse)
-
+from src.utils.bcrypt_pass import bcrypt_password
+from src.utils.database import engine, get_db
 
 app = FastAPI()
 Base.metadata.create_all(engine)
@@ -62,7 +62,7 @@ def list_user(db: Session = Depends(get_db)):
 @app.post('/user', status_code=status.HTTP_201_CREATED, response_model=UserDetailsResponse)
 def create_user(request: UserRequest, db: Session = Depends(get_db)):
     new_user = UserModel(first_name=request.first_name, last_name=request.last_name, email=request.email,
-                         password=request.password)
+                         password=bcrypt_password(request.password))
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
