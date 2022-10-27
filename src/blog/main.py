@@ -4,8 +4,8 @@ from typing import List
 
 from src.utils.database import engine, get_db
 from src.blog.models import Base, BlogModel, UserModel
-from src.blog.schemas.requests import BlogRequest
-from src.blog.schemas.responses import BlogResponse, BlogDetailsResponse, UserResponse
+from src.blog.schemas.requests import BlogRequest, UserRequest
+from src.blog.schemas.responses import (BlogResponse, BlogDetailsResponse, UserResponse, UserDetailsResponse)
 
 
 app = FastAPI()
@@ -57,3 +57,12 @@ def update_blog(id: int, request: BlogRequest, db: Session = Depends(get_db)):
 def list_user(db: Session = Depends(get_db)):
     blogs = db.query(UserModel).all()
     return blogs
+
+
+@app.post('/user', status_code=status.HTTP_201_CREATED, response_model=UserDetailsResponse)
+def create_user(request: UserRequest, db: Session = Depends(get_db)):
+    new_user = UserModel(first_name=request.first_name, last_name=request.last_name, email=request.email)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user

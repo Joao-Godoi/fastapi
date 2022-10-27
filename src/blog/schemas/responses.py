@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from src.blog.schemas.requests import BlogRequest
+from src.blog.schemas.requests import BlogRequest, UserRequest
 
 
 class BlogResponse(BaseModel):
@@ -20,5 +20,10 @@ class UserResponse(BaseModel):
     first_name: str
     email: str
 
+    class Config:
+        orm_mode = True
+
+
+class UserDetailsResponse(UserRequest):
     class Config:
         orm_mode = True
