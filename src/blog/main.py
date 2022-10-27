@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, status, HTTPException
 from sqlalchemy.orm import Session
 from typing import Optional
 
@@ -11,22 +11,22 @@ app = FastAPI()
 Base.metadata.create_all(engine)
 
 
-@app.get('/blog')
-def list_blog(limit: int = 10, published: bool = False, sort: Optional[str] = None):
-    if published:
-        return {"result": [{"Blog 1": {"Content": "Content of blog 1", "Published": "06.21.2022"}},
-                           {"Blog 2": {"Content": "Content of blog 2", "Published": "06.21.2022"}}]}
-    else:
-        return {"result": [{"Blog 3": {"Content": "Content of blog 3", "Published": False}},
-                           {"Blog 4": {"Content": "Content of blog 4", "Published": False}}]}
+@app.get('/blogs')
+def list(db: Session = Depends(get_db)):
+    blogs = db.query(BlogModel).all()
+    return blogs
 
 
-@app.get('/blog/{id}')
-def detail_blog(id: int):
-    return {f"Blog {id}": {"Content": f"Details of blog {id}"}}
+@app.get('/blog/{id}', status_code=status.HTTP_200_OK)
+def retrieve(id: int, db: Session = Depends(get_db)):
+    blog = db.query(BlogModel).get(ident=id)
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="blog not found, check the ID and try again!")
+    return blog
 
 
-@app.post('/blog')
+@app.post('/blog', status_code=status.HTTP_201_CREATED)
 def create_blog(request: BlogRequest, db: Session = Depends(get_db)):
     new_blog = BlogModel(title=request.title, content=request.content)
     db.add(new_blog)
