@@ -38,7 +38,17 @@ def create(request: BlogRequest, db: Session = Depends(get_db)):
 
 
 @app.delete('/blog/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def destroy_blog(id: int, db: Session = Depends(get_db)):
+def destroy(id: int, db: Session = Depends(get_db)):
     db.query(BlogModel).filter(BlogModel.id == id).delete(synchronize_session=False)
     db.commit()
     return True
+
+
+@app.put('/blog/{id}', status_code=status.HTTP_202_ACCEPTED)
+def update(id: int, request: BlogRequest, db: Session = Depends(get_db)):
+    blog = db.query(BlogModel).get(ident=id)
+    if not blog:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Blog not found to update")
+    blog.update({"title": request.title, "content": request.content})
+    db.commit()
+    return {"detail": "updated successfully"}
