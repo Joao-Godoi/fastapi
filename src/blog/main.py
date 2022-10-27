@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from src.utils.database import engine, get_db
-from src.blog.models import Base, BlogModel
+from src.blog.models import Base, BlogModel, UserModel
 from src.blog.schemas.requests import BlogRequest
-from src.blog.schemas.responses import BlogResponse, BlogDetailsResponse
+from src.blog.schemas.responses import BlogResponse, BlogDetailsResponse, UserResponse
 
 
 app = FastAPI()
@@ -51,3 +51,9 @@ def update_blog(id: int, request: BlogRequest, db: Session = Depends(get_db)):
     blog.update({"title": request.title, "content": request.content})
     db.commit()
     return blog.first()
+
+
+@app.get('/users', response_model=List[UserResponse])
+def list_user(db: Session = Depends(get_db)):
+    blogs = db.query(UserModel).all()
+    return blogs

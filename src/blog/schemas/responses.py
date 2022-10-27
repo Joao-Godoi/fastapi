@@ -13,3 +13,12 @@ class BlogResponse(BaseModel):
 class BlogDetailsResponse(BlogRequest):
     class Config:
         orm_mode = True
+
+
+class UserResponse(BaseModel):
+    id: int
+    first_name: str
+    email: str
+
+    class Config:
+        orm_mode = True
