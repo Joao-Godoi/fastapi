@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 
-from src.blog.database import Base
+from src.utils.database import Base
 
 
 class BlogModel(Base):
