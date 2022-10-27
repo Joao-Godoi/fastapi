@@ -66,3 +66,12 @@ def create_user(request: UserRequest, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@app.get('/user/{id}', status_code=status.HTTP_200_OK, response_model=UserDetailsResponse)
+def retrieve_user(id: int, db: Session = Depends(get_db)):
+    user = db.query(UserModel).get(ident=id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail="User not found, check the ID and try again!")
+    return user
