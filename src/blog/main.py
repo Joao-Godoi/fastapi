@@ -82,3 +82,13 @@ def destroy_user(id: int, db: Session = Depends(get_db)):
     db.query(UserModel).filter(UserModel.id == id).delete(synchronize_session=False)
     db.commit()
     return True
+
+
+@app.put('/user/{id}', status_code=status.HTTP_202_ACCEPTED, response_model=UserDetailsResponse)
+def update_uer(id: int, request: UserRequest, db: Session = Depends(get_db)):
+    user = db.query(UserModel).filter(UserModel.id == id)
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found to update")
+    user.update({"first_name": request.first_name, "last_name": request.last_name, "email": request.email})
+    db.commit()
+    return user.first()
