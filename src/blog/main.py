@@ -27,7 +27,7 @@ def retrieve(id: int, db: Session = Depends(get_db)):
 
 
 @app.post('/blog', status_code=status.HTTP_201_CREATED)
-def create_blog(request: BlogRequest, db: Session = Depends(get_db)):
+def create(request: BlogRequest, db: Session = Depends(get_db)):
     new_blog = BlogModel(title=request.title, content=request.content)
     db.add(new_blog)
     db.commit()
@@ -35,3 +35,10 @@ def create_blog(request: BlogRequest, db: Session = Depends(get_db)):
 
     return {"message": "Blog is created successfully!", "title": new_blog.title,
             "content": new_blog.content}
+
+
+@app.delete('/blog/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def destroy_blog(id: int, db: Session = Depends(get_db)):
+    db.query(BlogModel).filter(BlogModel.id == id).delete(synchronize_session=False)
+    db.commit()
+    return True
